@@ -47,6 +47,11 @@ fs.access(options.input, fs.constants.F_OK, (err) => {
         // Обробка параметрів запиту для Варіанта 4
         const showVariety = url.searchParams.get('variety') === 'true';
         const minPetalLengthStr = url.searchParams.get('min_petal_length');
+        if (minPetalLengthStr === '') {
+           res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+           res.end('400: Параметр min_petal_length не може бути порожнім');
+           return;
+          }
 
         if (minPetalLengthStr !== null) {
           const minPetalLength = Number(minPetalLengthStr);
@@ -61,8 +66,8 @@ fs.access(options.input, fs.constants.F_OK, (err) => {
         // Формування масиву результатів із потрібними полями
         const result = records.map(r => {
           const obj = {
-            petal_length: r['petal.length'],
-            petal_width: r['petal.width']
+            petal_length: Number(r['petal.length']),
+            petal_width: Number(r['petal.width'])
           };
           if (showVariety) {
             obj.variety = r['variety'];
